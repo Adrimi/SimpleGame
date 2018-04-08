@@ -83,7 +83,7 @@ public class Game implements Runnable{
         // Koniec rysowania
 
         bs.show();
-        g.dispose();            // bez tych dwóch linijek program się sypie - nwm czemu
+        g.dispose();            // te linijki są zabezpieczeniem przed awarią
     }
 
     public void run() {
