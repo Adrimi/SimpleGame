@@ -1,10 +1,13 @@
 package dev.adrimi.simplegame;
 
 import dev.adrimi.simplegame.display.Display;
+import dev.adrimi.simplegame.gfx.Assets;
 import dev.adrimi.simplegame.gfx.ImageLoader;
+import dev.adrimi.simplegame.gfx.SpriteSheet;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 public class Game implements Runnable{
 
@@ -26,6 +29,7 @@ public class Game implements Runnable{
 
     private void init() {       // coś tam ustawia, tylko raz na początku
         display = new Display(title, width, height);
+        Assets.init();
     }
 
     private void tick() {
@@ -46,9 +50,35 @@ public class Game implements Runnable{
 
         // Początek rysowania
 
-        g.fillRect(0,0, width, height);
-        g.setColor(Color.gray);
-        g.fillRect(0,0,width,25);
+        g.drawImage(Assets.wall_black, 0, 64, null);
+        g.drawImage(Assets.wall_black, 0, 128, null);
+        g.drawImage(Assets.wall_black, 0, 192, null);
+        g.drawImage(Assets.wall_black, 0, 256, null);
+        g.drawImage(Assets.wall_black, 64, 256, null);
+        g.drawImage(Assets.wall_black, 128, 256, null);
+        g.drawImage(Assets.wall_black, 192, 256, null);
+        g.drawImage(Assets.wall_black, 256, 256, null);
+        g.drawImage(Assets.wall_black, 256, 192, null);
+        g.drawImage(Assets.wall_black, 256, 128, null);
+        g.drawImage(Assets.wall_black, 256, 64, null);
+        g.drawImage(Assets.wall_black, 256, 0, null);
+        g.drawImage(Assets.wall_black, 192, 0, null);
+        g.drawImage(Assets.wall_black, 128, 0, null);
+        g.drawImage(Assets.wall_black, 64, 0, null);
+        g.drawImage(Assets.wall_black, 0, 0, null);
+
+        g.drawImage(Assets.groundGravel_Grass, 64, 64, null);
+        g.drawImage(Assets.groundGravel_Grass, 64, 128, null);
+        g.drawImage(Assets.groundGravel_Grass, 64, 192, null);
+        g.drawImage(Assets.groundGravel_Grass, 128, 64, null);
+        g.drawImage(Assets.groundGravel_Grass, 128, 128, null);
+        g.drawImage(Assets.groundGravel_Grass, 128, 192, null);
+        g.drawImage(Assets.groundGravel_Grass, 192, 64, null);
+        g.drawImage(Assets.groundGravel_Grass, 192, 128, null);
+        g.drawImage(Assets.groundGravel_Grass, 192, 192, null);
+
+
+        g.drawImage(Assets.character4, 64+(Assets.character4.getWidth()/2), 64+(64-Assets.character4.getHeight()), null);
 
         // Koniec rysowania
 
