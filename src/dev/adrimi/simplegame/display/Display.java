@@ -36,4 +36,8 @@ public class Display {
         frame.pack();
     }
 
+    public Canvas getCanvas() {   // To pozwala nam rysować rzeczy, będzie zwracało potrzebne śmieci
+        return canvas;
+    }
+
 }
