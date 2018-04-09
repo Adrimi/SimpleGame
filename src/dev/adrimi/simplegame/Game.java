@@ -2,12 +2,12 @@ package dev.adrimi.simplegame;
 
 import dev.adrimi.simplegame.display.Display;
 import dev.adrimi.simplegame.gfx.Assets;
-import dev.adrimi.simplegame.gfx.ImageLoader;
-import dev.adrimi.simplegame.gfx.SpriteSheet;
+import dev.adrimi.simplegame.states.GameState;
+import dev.adrimi.simplegame.states.State;
+
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 public class Game implements Runnable{
 
@@ -21,6 +21,10 @@ public class Game implements Runnable{
     private BufferStrategy bs;      // mówi komputerowi, JAK rysować rzeczy, używa buffery, zapobiega Błyskom!!
     private Graphics g;
 
+    // STANY
+    private State gameState; // Inicjalizacja obiektu ABSTRAKCYJNEGO, ale nie powstanie, to ważne!
+
+
     public Game(String title, int width, int heigth) {
         this.width = width;
         this.height = heigth;
@@ -30,10 +34,15 @@ public class Game implements Runnable{
     private void init() {       // coś tam ustawia, tylko raz na początku
         display = new Display(title, width, height);
         Assets.init();
+
+        gameState = new GameState(); // tutaj powstaje obiekt który dziedziczy po abstrakcyjnej State
+        State.setState(gameState);
     }
 
     private void tick() {
-
+        if (State.getState() != null) { // bardzo ważne, żeby sprawdzić, czy istnieje jakikolwiek stan gry (MENU, GR, itpA)
+            State.getState().tick();
+        }
     }
 
     private void render() {                             // render ciągle jest odpalane, więc tutaj
@@ -50,7 +59,7 @@ public class Game implements Runnable{
 
         // Początek rysowania
 
-        g.drawImage(Assets.wall_black, 0, 64, null);
+        /*g.drawImage(Assets.wall_black, 0, 64, null);
         g.drawImage(Assets.wall_black, 0, 128, null);
         g.drawImage(Assets.wall_black, 0, 192, null);
         g.drawImage(Assets.wall_black, 0, 256, null);
@@ -77,8 +86,15 @@ public class Game implements Runnable{
         g.drawImage(Assets.groundGravel_Grass, 192, 128, null);
         g.drawImage(Assets.groundGravel_Grass, 192, 192, null);
 
+        g.drawImage(Assets.endPoint_Blue, 192+Assets.endPoint_Blue.getWidth()/2,192+Assets.endPoint_Blue.getHeight()/2,null);
 
-        g.drawImage(Assets.character4, 64+(Assets.character4.getWidth()/2), 64+(64-Assets.character4.getHeight()), null);
+        g.drawImage(Assets.crate_Blue, 128,128,null);*/
+
+        if (State.getState() != null) {
+            State.getState().render(g);
+        }
+
+        g.drawImage(Assets.character4, 64+Assets.character4.getWidth()/2, 64+64-Assets.character4.getHeight(), null);
 
         // Koniec rysowania
 
@@ -87,11 +103,39 @@ public class Game implements Runnable{
     }
 
     public void run() {
+
         init();
+
+        // bardzo trudna do zapamiętania część RENDERU
+
+        int fps = 60;
+        double timePerTick = 1000000000/fps; //liczymy czas w nanosekundach
+        double delta = 0;
+        long now;
+        long lastTime = System.nanoTime();
+        long timer = 0;
+        int ticks = 0;
+
         while (running) {
-            tick();
-            render();
+            now = System.nanoTime();
+            delta += (now - lastTime) / timePerTick;
+            timer += now - lastTime;
+            lastTime = now;
+
+            if (delta >= 1) {
+                tick();
+                render();
+                delta--;
+                ticks++;
+            }
+
+            if (timer >= 1000000000) {
+                System.out.println("Ticks and Frames:" + ticks);
+                ticks = 0;
+                timer = 0;
+            }
         }
+
         stop();
     }
 
