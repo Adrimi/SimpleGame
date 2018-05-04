@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Klasa pomocnicza, odpowiada za przetwarzanie danych wejściowych i konwertowanie ich na String (wykorzystuje StringBuilder/buffer)
+ */
 public class Utils {
 
     public static String loadFileAsString(String path) {

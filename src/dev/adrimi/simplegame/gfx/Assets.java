@@ -2,6 +2,9 @@ package dev.adrimi.simplegame.gfx;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * PRE-Implementacja obrazów, ikonek gry. Potem jest łatwiej korzystać z gotowych wzorów do tworzenia obiektów typu TILE
+ */
 public class Assets {
 
     private static final int width = 64, height = 64;

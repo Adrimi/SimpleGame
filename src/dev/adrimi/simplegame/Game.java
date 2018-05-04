@@ -1,45 +1,90 @@
 package dev.adrimi.simplegame;
 
+import dev.adrimi.simplegame.KeyManager.KeyManager;
 import dev.adrimi.simplegame.display.Display;
 import dev.adrimi.simplegame.gfx.Assets;
+import dev.adrimi.simplegame.gfx.GameCamera;
 import dev.adrimi.simplegame.states.GameState;
+import dev.adrimi.simplegame.states.MenuState;
 import dev.adrimi.simplegame.states.State;
 
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
+/**
+ * Główny wątek gry, taki kontroler tego co się dzieje w grze
+ */
 public class Game implements Runnable{
 
+    /**
+     * Obiekt, który określa szczegółwy wyświetlania okienka gry (fizycznego, bez dodatków w postaci Canvas itp.)
+     */
     private Display display;
+
+    /**
+     * Tytuł gry
+     */
     public String title;
-    public int width, height;
 
-    private boolean running = false;        // pozwala na używanie GameLoop
-    private Thread thread;                  // wątkowanie, na tym polega pr. zd.
+    /**
+     * Rozmiary okna
+     */
+    private int width, height;
 
-    private BufferStrategy bs;      // mówi komputerowi, JAK rysować rzeczy, używa buffery, zapobiega Błyskom!!
+    /**
+     * Zmienna ta pozwala na używanie "GameLoop"
+     */
+    private boolean running = false;
+
+    /**
+     * Tworzenie wątków, które usprawniają działanie gry
+     */
+    private Thread thread;
+
+    /**
+     * Instrukcje JAK rysować obiekty, obrazy, co najważniejsze - ZAPOBIEGA MIGOTANIU.
+     */
+    private BufferStrategy bs;
+
+    /**
+     * Podstawowa klasa (narzędzie) do rysowania na Canvas
+     */
     private Graphics g;
 
-    // STANY
-    private State gameState; // Inicjalizacja obiektu ABSTRAKCYJNEGO, ale nie powstanie, to ważne!
+    //Stany
+    private State gameState;
+    private State menuState;
+
+    //Sterowanie
+    private KeyManager keyManager;
+
+    //Kamera
+    private GameCamera gameCamera;
 
 
     public Game(String title, int width, int heigth) {
         this.width = width;
         this.height = heigth;
         this.title = title;
+        keyManager = new KeyManager();
     }
 
     private void init() {       // coś tam ustawia, tylko raz na początku
         display = new Display(title, width, height);
+        display.getFrame().addKeyListener(keyManager);
         Assets.init();
 
-        gameState = new GameState(); // tutaj powstaje obiekt który dziedziczy po abstrakcyjnej State
+        gameCamera = new GameCamera(this, 0, 0);
+
+        gameState = new GameState(this); // tutaj powstaje obiekt który dziedziczy po abstrakcyjnej State
+        menuState = new MenuState(this);
         State.setState(gameState);
     }
 
     private void tick() {
+        keyManager.tick();
+
         if (State.getState() != null) { // bardzo ważne, żeby sprawdzić, czy istnieje jakikolwiek stan gry (MENU, GR, itpA)
             State.getState().tick();
         }
@@ -59,42 +104,9 @@ public class Game implements Runnable{
 
         // Początek rysowania
 
-        /*g.drawImage(Assets.wall_black, 0, 64, null);
-        g.drawImage(Assets.wall_black, 0, 128, null);
-        g.drawImage(Assets.wall_black, 0, 192, null);
-        g.drawImage(Assets.wall_black, 0, 256, null);
-        g.drawImage(Assets.wall_black, 64, 256, null);
-        g.drawImage(Assets.wall_black, 128, 256, null);
-        g.drawImage(Assets.wall_black, 192, 256, null);
-        g.drawImage(Assets.wall_black, 256, 256, null);
-        g.drawImage(Assets.wall_black, 256, 192, null);
-        g.drawImage(Assets.wall_black, 256, 128, null);
-        g.drawImage(Assets.wall_black, 256, 64, null);
-        g.drawImage(Assets.wall_black, 256, 0, null);
-        g.drawImage(Assets.wall_black, 192, 0, null);
-        g.drawImage(Assets.wall_black, 128, 0, null);
-        g.drawImage(Assets.wall_black, 64, 0, null);
-        g.drawImage(Assets.wall_black, 0, 0, null);
-
-        g.drawImage(Assets.groundGravel_Grass, 64, 64, null);
-        g.drawImage(Assets.groundGravel_Grass, 64, 128, null);
-        g.drawImage(Assets.groundGravel_Grass, 64, 192, null);
-        g.drawImage(Assets.groundGravel_Grass, 128, 64, null);
-        g.drawImage(Assets.groundGravel_Grass, 128, 128, null);
-        g.drawImage(Assets.groundGravel_Grass, 128, 192, null);
-        g.drawImage(Assets.groundGravel_Grass, 192, 64, null);
-        g.drawImage(Assets.groundGravel_Grass, 192, 128, null);
-        g.drawImage(Assets.groundGravel_Grass, 192, 192, null);
-
-        g.drawImage(Assets.endPoint_Blue, 192+Assets.endPoint_Blue.getWidth()/2,192+Assets.endPoint_Blue.getHeight()/2,null);
-
-        g.drawImage(Assets.crate_Blue, 128,128,null);*/
-
-        if (State.getState() != null) {
+        if (State.getState() != null) {     // Wywołujemy metode renderu zależną, od stanu programu (MENU, GRA, itp.)
             State.getState().render(g);
         }
-
-        g.drawImage(Assets.character4, 64+Assets.character4.getWidth()/2, 64+64-Assets.character4.getHeight(), null);
 
         // Koniec rysowania
 
@@ -137,6 +149,22 @@ public class Game implements Runnable{
         }
 
         stop();
+    }
+        // Metoda która zwraca prywatny parametr
+    public KeyManager getKeyManager() {
+        return keyManager;
+    }
+
+    public GameCamera getGameCamera() {
+        return gameCamera;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public synchronized void start() {
