@@ -7,6 +7,7 @@ import dev.adrimi.simplegame.gfx.GameCamera;
 import dev.adrimi.simplegame.states.GameState;
 import dev.adrimi.simplegame.states.MenuState;
 import dev.adrimi.simplegame.states.State;
+import dev.adrimi.simplegame.tiles.Tile;
 
 
 import java.awt.*;
@@ -62,6 +63,8 @@ public class Game implements Runnable{
     //Kamera
     private GameCamera gameCamera;
 
+    //Handler
+    private Handler handler;
 
     public Game(String title, int width, int heigth) {
         this.width = width;
@@ -70,16 +73,20 @@ public class Game implements Runnable{
         keyManager = new KeyManager();
     }
 
-    private void init() {       // coś tam ustawia, tylko raz na początku
+    private void init() {       // tylko raz, na początku
         display = new Display(title, width, height);
         display.getFrame().addKeyListener(keyManager);
         Assets.init();
 
-        gameCamera = new GameCamera(this, 0, 0);
+        handler = new Handler(this);
+        gameCamera = new GameCamera(handler, 0, 0);
 
-        gameState = new GameState(this); // tutaj powstaje obiekt który dziedziczy po abstrakcyjnej State
-        menuState = new MenuState(this);
+        gameState = new GameState(handler); // tutaj powstaje obiekt który dziedziczy po abstrakcyjnej State
+        menuState = new MenuState(handler);
         State.setState(gameState);
+
+
+
     }
 
     private void tick() {
@@ -189,3 +196,9 @@ public class Game implements Runnable{
     }
 
 }
+
+
+/*
+display = new Display(title, handler.getWorld().getWidth() * Tile.TILEWIDTH,
+                handler.getWorld().getHeight() * Tile.TILEHEIGHT);
+ */

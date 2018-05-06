@@ -1,6 +1,6 @@
 package dev.adrimi.simplegame.states;
 
-import dev.adrimi.simplegame.Game;
+import dev.adrimi.simplegame.Handler;
 import dev.adrimi.simplegame.entity.Player;
 import dev.adrimi.simplegame.worlds.World;
 
@@ -14,10 +14,11 @@ public class GameState extends State{
     private World world;
     private Player player;
 
-    public GameState(Game game) {
-        super(game);
-        world = new World(game, "res/worlds/world1.txt");
-        player = new Player(game, world.getSpawnX()*64 + 16,
+    public GameState(Handler handler) {
+        super(handler);
+        world = new World(handler, "res/worlds/world1.txt");
+        handler.setWorld(world);
+        player = new Player(handler, world.getSpawnX()*64 + 16,
                 world.getSpawnY()*64, 37, 59);
     }
 

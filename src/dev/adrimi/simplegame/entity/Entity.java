@@ -1,14 +1,25 @@
 package dev.adrimi.simplegame.entity;
 
-import dev.adrimi.simplegame.Game;
+import dev.adrimi.simplegame.Handler;
 
 import java.awt.*;
 
 public abstract class Entity {
 
-    protected Game game;
+    protected Handler handler;
     protected float xPos, yPos;
     protected int width, height;
+    protected Rectangle bounds;   // system kolizji, "ciało" gracza
+
+    public Entity(Handler handler, float xPos, float yPos, int width, int height) {
+        this.handler = handler;
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.width = width;
+        this.height = height;
+
+        bounds = new Rectangle(0, 0, width, height);
+    }
 
     public float getxPos() {
         return xPos;
@@ -42,15 +53,6 @@ public abstract class Entity {
         this.height = height;
     }
 
-    public Entity(Game game, float xPos, float yPos, int width, int height) {
-        this.game = game;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.width = width;
-        this.height = height;
-    }
-
     public abstract void tick();
-
     public abstract void render(Graphics g);
 }

@@ -1,6 +1,6 @@
 package dev.adrimi.simplegame.states;
 
-import dev.adrimi.simplegame.Game;
+import dev.adrimi.simplegame.Handler;
 
 import java.awt.*;
 
@@ -21,10 +21,10 @@ public abstract class State {
 
     // CLASS
 
-    protected Game game;
+    protected Handler handler;
 
-    public State(Game game) {
-        this.game = game;
+    public State(Handler handler) {
+        this.handler = handler;
     }
 
     public abstract void tick();
